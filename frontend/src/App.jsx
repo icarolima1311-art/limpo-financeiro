@@ -1,35 +1,74 @@
 import { useState } from 'react';
+import { supabase } from './supabaseClient';
 import './App.css';
 
 function App() {
-  // Nosso "interruptor". Começa em 'true' para mostrar a tela de Login primeiro.
   const [isLoginPage, setIsLoginPage] = useState(true);
+  
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  // Função para mudar para a tela de Cadastro
-  const showRegisterPage = () => {
-    setIsLoginPage(false);
-  };
+  const showRegisterPage = () => setIsLoginPage(false);
+  const showLoginPage = () => setIsLoginPage(true);
 
-  // Função para mudar para a tela de Login
-  const showLoginPage = () => {
-    setIsLoginPage(true);
-  };
+  async function handleRegister(event) {
+    console.log("O botão de cadastro FOI CLICADO!");
+    event.preventDefault(); 
+
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: {
+          full_name: name,
+        }
+      }
+    });
+
+    if (error) {
+      alert("Erro ao cadastrar: " + error.message);
+    } else {
+      alert("Cadastro realizado! Verifique seu e-mail para confirmação.");
+      setName('');
+      setEmail('');
+      setPassword('');
+    }
+  }
+  
+  async function handleLogin(event) {
+    event.preventDefault();
+    alert("Função de Login ainda não implementada!");
+  }
 
   if (isLoginPage) {
-    // Se o interruptor estiver em LOGIN, mostra este código:
     return (
       <div className="login-container">
         <div className="login-box">
           <h1>Limpo Financeiro</h1>
           <p>Seu dinheiro, suas regras.</p>
-          <form>
+          <form onSubmit={handleLogin}>
             <div className="input-group">
               <label htmlFor="email">E-mail</label>
-              <input type="email" id="email" placeholder="seuemail@exemplo.com" required />
+              <input 
+                type="email" 
+                id="email" 
+                placeholder="seuemail@exemplo.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required 
+              />
             </div>
             <div className="input-group">
               <label htmlFor="password">Senha</label>
-              <input type="password" id="password" placeholder="********" required />
+              <input 
+                type="password" 
+                id="password" 
+                placeholder="********" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required 
+              />
             </div>
             <button type="submit" className="login-button">Entrar</button>
           </form>
@@ -40,24 +79,45 @@ function App() {
       </div>
     );
   } else {
-    // Se o interruptor estiver em CADASTRO, mostra este código:
+    // A CORREÇÃO ESTÁ NA LINHA ABAIXO
     return (
       <div className="login-container">
         <div className="login-box">
           <h1>Crie sua Conta</h1>
           <p>Rápido e fácil.</p>
-          <form>
+          <form onSubmit={handleRegister}> 
             <div className="input-group">
               <label htmlFor="name">Nome</label>
-              <input type="text" id="name" placeholder="Seu nome completo" required />
+              <input 
+                type="text" 
+                id="name" 
+                placeholder="Seu nome completo"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required 
+              />
             </div>
             <div className="input-group">
               <label htmlFor="email">E-mail</label>
-              <input type="email" id="email" placeholder="seuemail@exemplo.com" required />
+              <input 
+                type="email" 
+                id="email" 
+                placeholder="seuemail@exemplo.com" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
             <div className="input-group">
               <label htmlFor="password">Senha</label>
-              <input type="password" id="password" placeholder="Pelo menos 6 caracteres" required />
+              <input 
+                type="password" 
+                id="password" 
+                placeholder="Pelo menos 6 caracteres" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </div>
             <button type="submit" className="login-button">Cadastrar</button>
           </form>
