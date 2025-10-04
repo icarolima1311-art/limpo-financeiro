@@ -35,26 +35,23 @@ export default function Dashboard({ user }) {
     }
   }
 
-  // NOVA FUNÇÃO PARA DELETAR
   async function handleDelete(id) {
     const { error } = await supabase.from('expenses').delete().eq('id', id);
-    if (error) {
-      alert("Erro ao deletar despesa: " + error.message);
-    } else {
-      getExpenses(); // Atualiza a lista na tela
-    }
+    if (error) alert("Erro ao deletar despesa: " + error.message);
+    else getExpenses();
   }
 
   return (
     <div className="login-container">
       <div className="login-box" style={{ textAlign: 'left', width: '600px', maxWidth: '90%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1>Dashboard</h1>
+          {/* AQUI ESTÁ A MUDANÇA SUTIL */}
+          <h1>Bem-vindo, {user.user_metadata.full_name}!</h1>
           <button onClick={handleLogout} style={{ height: '40px' }}>
             Sair
           </button>
         </div>
-        <p>Bem-vindo, {user.email}!</p>
+        <p>Logado como: {user.email}</p>
         
         <hr />
 
@@ -79,7 +76,6 @@ export default function Dashboard({ user }) {
                   <strong>{expense.description}</strong> - R$ {expense.amount} 
                   <em style={{ marginLeft: '10px', color: '#666' }}>({expense.category})</em>
                 </span>
-                {/* BOTÃO DE DELETAR ADICIONADO AQUI */}
                 <button onClick={() => handleDelete(expense.id)} style={{ background: 'red', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '4px' }}>
                   X
                 </button>
