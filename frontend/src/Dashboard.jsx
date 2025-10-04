@@ -5,23 +5,14 @@ import { supabase } from './supabaseClient';
 
 export default function Dashboard({ user }) {
   const [expenses, setExpenses] = useState([]);
-  
-  // Estados para o novo formulário de despesa
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
 
-  // Função para buscar as despesas (agora vamos reusar ela)
   async function getExpenses() {
-    const { data, error } = await supabase
-      .from('expenses')
-      .select('*');
-
-    if (error) {
-      console.error('Erro ao buscar despesas:', error.message);
-    } else {
-      setExpenses(data);
-    }
+    const { data, error } = await supabase.from('expenses').select('*');
+    if (error) console.error('Erro ao buscar despesas:', error.message);
+    else setExpenses(data);
   }
 
   useEffect(() => {
@@ -32,29 +23,25 @@ export default function Dashboard({ user }) {
     await supabase.auth.signOut();
   }
 
-  // Função para adicionar a nova despesa
   async function handleAddExpense(event) {
     event.preventDefault();
-
-    const { error } = await supabase
-      .from('expenses')
-      .insert({ 
-        description: description, 
-        amount: amount, 
-        category: category 
-        // user_id é adicionado automaticamente pelo "Default Value" que definimos
-      });
-      
-    if (error) {
-      alert("Erro ao adicionar despesa: " + error.message);
-    } else {
-      alert("Despesa adicionada com sucesso!");
-      // Limpa os campos do formulário
+    const { error } = await supabase.from('expenses').insert({ description, amount, category });
+    if (error) alert("Erro ao adicionar despesa: " + error.message);
+    else {
       setDescription('');
       setAmount('');
       setCategory('');
-      // Atualiza a lista de despesas na tela
       getExpenses(); 
+    }
+  }
+
+  // NOVA FUNÇÃO PARA DELETAR
+  async function handleDelete(id) {
+    const { error } = await supabase.from('expenses').delete().eq('id', id);
+    if (error) {
+      alert("Erro ao deletar despesa: " + error.message);
+    } else {
+      getExpenses(); // Atualiza a lista na tela
     }
   }
 
@@ -71,30 +58,11 @@ export default function Dashboard({ user }) {
         
         <hr />
 
-        {/* Formulário para adicionar nova despesa */}
         <h2>Adicionar Nova Despesa</h2>
         <form onSubmit={handleAddExpense} style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-          <input 
-            type="text" 
-            placeholder="Descrição (ex: Jantar)" 
-            value={description} 
-            onChange={(e) => setDescription(e.target.value)} 
-            required 
-          />
-          <input 
-            type="number" 
-            placeholder="Valor (ex: 50)" 
-            value={amount} 
-            onChange={(e) => setAmount(e.target.value)} 
-            required 
-          />
-          <input 
-            type="text" 
-            placeholder="Categoria (ex: Alimentação)" 
-            value={category} 
-            onChange={(e) => setCategory(e.target.value)} 
-            required 
-          />
+          <input type="text" placeholder="Descrição (ex: Jantar)" value={description} onChange={(e) => setDescription(e.target.value)} required />
+          <input type="number" placeholder="Valor (ex: 50)" value={amount} onChange={(e) => setAmount(e.target.value)} required />
+          <input type="text" placeholder="Categoria (ex: Alimentação)" value={category} onChange={(e) => setCategory(e.target.value)} required />
           <button type="submit">Adicionar</button>
         </form>
 
@@ -106,9 +74,15 @@ export default function Dashboard({ user }) {
         ) : (
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {expenses.map((expense) => (
-              <li key={expense.id} style={{ borderBottom: '1px solid #eee', padding: '10px 0' }}>
-                <strong>{expense.description}</strong> - R$ {expense.amount} 
-                <em style={{ marginLeft: '10px', color: '#666' }}>({expense.category})</em>
+              <li key={expense.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #eee', padding: '10px 0' }}>
+                <span>
+                  <strong>{expense.description}</strong> - R$ {expense.amount} 
+                  <em style={{ marginLeft: '10px', color: '#666' }}>({expense.category})</em>
+                </span>
+                {/* BOTÃO DE DELETAR ADICIONADO AQUI */}
+                <button onClick={() => handleDelete(expense.id)} style={{ background: 'red', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '4px' }}>
+                  X
+                </button>
               </li>
             ))}
           </ul>
