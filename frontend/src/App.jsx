@@ -13,7 +13,6 @@ function App() {
   const showLoginPage = () => setIsLoginPage(true);
 
   async function handleRegister(event) {
-    console.log("O botão de cadastro FOI CLICADO!");
     event.preventDefault(); 
 
     const { data, error } = await supabase.auth.signUp({
@@ -36,9 +35,23 @@ function App() {
     }
   }
   
+  // AQUI ESTÁ A MUDANÇA
   async function handleLogin(event) {
     event.preventDefault();
-    alert("Função de Login ainda não implementada!");
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (error) {
+      alert("Erro no login: " + error.message);
+    } else {
+      alert("Login bem-sucedido! Bem-vindo!");
+      // Futuramente, aqui vamos redirecionar para a tela principal
+      setEmail('');
+      setPassword('');
+    }
   }
 
   if (isLoginPage) {
@@ -79,13 +92,12 @@ function App() {
       </div>
     );
   } else {
-    // A CORREÇÃO ESTÁ NA LINHA ABAIXO
     return (
       <div className="login-container">
         <div className="login-box">
           <h1>Crie sua Conta</h1>
           <p>Rápido e fácil.</p>
-          <form onSubmit={handleRegister}> 
+          <form onSubmit={handleRegister}>
             <div className="input-group">
               <label htmlFor="name">Nome</label>
               <input 
