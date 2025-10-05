@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
-// O import do Google foi REMOVIDO
 
 export default function Dashboard({ user }) {
   const [expenses, setExpenses] = useState([]);
@@ -12,7 +11,9 @@ export default function Dashboard({ user }) {
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState('');
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState('');
+  
+  // AQUI ESTÁ A MUDANÇA NO TEXTO
+  const [analysisResult, setAnalysisResult] = useState("Clique em 'Gerar Análise Financeira' para ver uma demonstração. (Feature em desenvolvimento)");
 
   async function getExpenses() {
     const { data, error } = await supabase.from('expenses').select('*');
@@ -49,35 +50,40 @@ export default function Dashboard({ user }) {
     }
   }
 
-  // FUNÇÃO DE ANÁLISE "MOCKADA" (PLANO DE EMERGÊNCIA)
   async function handleGenerateAnalysis() {
     setLoadingAnalysis(true);
     setAnalysisResult('');
     console.log("MODO DE EMERGÊNCIA: 'Mockando' a resposta da IA.");
-
-    // Este é o nosso texto falso
-    const mockResponse = `Olá! Analisei suas despesas e aqui vai um resumo rápido:
-
-Seu principal gasto no momento parece ser com **Alimentação**, onde você gastou um total significativo. É comum que essa categoria ocupe uma parte importante do orçamento mensal.
-
-Uma dica prática para o próximo mês seria tentar planejar as refeições da semana com antecedência. Isso pode ajudar a reduzir gastos impulsivos com delivery e restaurantes, gerando uma boa economia no final do mês sem que você precise abrir mão de comer bem.`;
-
-    // Simula o tempo de espera da IA
+    const mockResponse = `Olá! Analisei suas despesas e aqui vai um resumo rápido:\n\nSeu principal gasto no momento parece ser com **Alimentação**, onde você gastou um total significativo. É comum que essa categoria ocupe uma parte importante do orçamento mensal.\n\nUma dica prática para o próximo mês seria tentar planejar as refeições da semana com antecedência. Isso pode ajudar a reduzir gastos impulsivos com delivery e restaurantes, gerando uma boa economia no final do mês sem que você precise abrir mão de comer bem.`;
     setTimeout(() => {
       setAnalysisResult(mockResponse);
       setLoadingAnalysis(false);
-    }, 2500); // 2.5 segundos de espera
+    }, 2500);
   }
+  
+  const totalSpent = expenses.reduce((sum, expense) => sum + Number(expense.amount), 0);
+  const transactionCount = expenses.length;
 
   return (
-    // O JSX (parte visual) continua exatamente o mesmo
     <div className="login-container">
-      <div className="login-box" style={{ textAlign: 'left', width: '600px', maxWidth: '90%' }}>
+      <div className="login-box" style={{ width: '100%', maxWidth: '700px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h1>Bem-vindo, {user.user_metadata.full_name}!</h1>
           <button onClick={handleLogout} style={{ height: '40px' }}>Sair</button>
         </div>
         <p>Logado como: {user.email}</p>
+        
+        <div className="summary-container">
+          <div className="summary-card">
+            <h2>Total Gasto</h2>
+            <span>R$ {totalSpent.toFixed(2)}</span>
+          </div>
+          <div className="summary-card">
+            <h2>Transações</h2>
+            <span>{transactionCount}</span>
+          </div>
+        </div>
+        
         <hr />
         <h2>Adicionar Nova Despesa</h2>
         <form onSubmit={handleAddExpense} style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
@@ -120,9 +126,9 @@ Uma dica prática para o próximo mês seria tentar planejar as refeições da s
           {loadingAnalysis ? 'Analisando...' : 'Gerar Análise Financeira'}
         </button>
         {analysisResult && (
-          <div style={{ marginTop: '20px', padding: '15px', background: '#f0f2f5', borderRadius: '8px' }}>
+          <div className="analysis-box">
             <strong>Resultado da Análise:</strong>
-            <p style={{whiteSpace: 'pre-wrap'}}>{analysisResult}</p>
+            <p>{analysisResult}</p>
           </div>
         )}
       </div>

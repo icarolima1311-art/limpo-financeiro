@@ -1,28 +1,63 @@
+/* Definindo nossas cores e fonte para o projeto inteiro */
+:root {
+  --primary-blue: #0d6efd;
+  --text-primary: #e6e6e6;
+  --text-secondary: #a9a9a9;
+  --border-color: #444;
+  --surface-color: rgba(20, 20, 20, 0.8);
+}
+
+/* Animação do Gradiente de Fundo */
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-primary);
+  background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1a2930);
+  background-size: 400% 400%;
+  animation: gradientAnimation 15s ease infinite;
+}
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f0f2f5;
-  font-family: sans-serif;
-  text-align: center;
+  padding: 20px;
 }
 
 .login-box {
-  background-color: white;
+  background: var(--surface-color);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 360px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  width: 100%;
+  max-width: 450px;
+  box-sizing: border-box; 
 }
 
-h1 {
-  color: #1c1e21;
-  font-size: 28px;
+h1, h2 {
+  color: var(--text-primary);
+  text-align: center;
 }
 
-.login-box p {
-  color: #606770;
+p {
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 25px 0;
 }
 
 .input-group {
@@ -33,47 +68,119 @@ h1 {
 .input-group label {
   display: block;
   margin-bottom: 5px;
-  color: #606770;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
-.input-group input {
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"] {
   box-sizing: border-box;
   width: 100%;
   padding: 12px;
-  border: 1px solid #dddfe2;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 16px;
+  color: var(--text-primary);
+  transition: border-color 0.3s ease;
 }
 
-.login-button {
-  width: 100%;
-  padding: 12px;
-  background-color: #0866ff;
+input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+}
+
+button {
+  padding: 10px 15px;
+  background-color: var(--primary-blue);
   border: none;
   border-radius: 6px;
   color: white;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  margin-top: 10px;
+  transition: all 0.3s ease;
 }
 
-.login-button:hover {
-  background-color: #0655d4;
+button:hover {
+  background-color: #0b5ed7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(13, 110, 253, 0.4);
+}
+
+button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+    
+.login-button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
 }
 
 .signup-link {
   margin-top: 20px;
   font-size: 14px;
+  text-align: center;
 }
 
 .signup-link a {
-  color: #0866ff;
+  color: var(--primary-blue);
   text-decoration: none;
   font-weight: bold;
 }
 
 .signup-link a:hover {
   text-decoration: underline;
+}
+
+.analysis-box {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.analysis-box strong {
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.analysis-box p {
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  text-align: left;
+}
+
+.summary-container {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.summary-card {
+  flex: 1;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+
+.summary-card h2 {
+  margin-top: 0;
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.summary-card span {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--text-primary);
 }
